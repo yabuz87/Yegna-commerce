@@ -4,5 +4,9 @@ This project aims to build an engaging and efficient online platform where users
 Key Features
 
 Tech Stack
+Backend node.js express mongoDB Redis
+Frontend 
+react.js tailwind,daiy ui
+react native for mobile application
 
 </p>
