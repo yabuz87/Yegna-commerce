@@ -1,5 +1,6 @@
 import express from "express";
 import dotenv from "dotenv"
+import cookieParser from "cookie-parser";
 import productRoute from "./router/productRouters.js";
 import connect from "./lib/mongodb.js" 
 import authRouter from "./router/salerAuth.js";
@@ -10,6 +11,7 @@ const app=express();
 
 app.use(express.urlencoded({extended:false}));
 app.use(express.json());
+app.use(cookieParser());
 app.use("/product",productRoute);
 app.use("/authSaler",authRouter);
 app.use("/authBuyer",authBuyerRouter);

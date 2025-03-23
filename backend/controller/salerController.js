@@ -2,8 +2,6 @@ import bcrypt from "bcrypt"
 import { generateToken } from "../lib/util.js";
 import Saler from "../model/saler.user.js";
 
-
-
 export const signup=async(req,res)=>{
     try {
         const {fullName,email,password,phone,address}=req.body;
@@ -85,5 +83,14 @@ export const logout=async(req,res)=>
     } catch (error) {
         console.log("there is error in logout method check it our");
         res.status(500).json({"message":error.message});
+    }
+}
+export const check=async(req,res)=>
+{
+    try {
+        res.status(200).json(req.user);
+    } catch (error){
+        console.log("there is error in check method in salerController");    
+        res.status(500).json({"message":error.message});    
     }
 }
