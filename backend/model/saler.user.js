@@ -29,13 +29,11 @@ const SalerSchema = new mongoose.Schema({
     },
     profileImage: {
         type: String,
+        default:""
     },
     productVisitedBy: {
         type: Number,
         default: 0, // Tracks the number of views
-    },
-    storeName: {
-        type: String,
     },
     rating: {
         type: Number,
