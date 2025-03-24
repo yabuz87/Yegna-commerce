@@ -25,6 +25,12 @@ const userSchema = new mongoose.Schema({
         type: Object,
         
     },
+    favourites:{
+        productId:[],
+        count:{type:Number,default:0}
+
+
+    },
     profileImage: {
         type: String,
         default: "",

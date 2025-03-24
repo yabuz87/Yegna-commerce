@@ -100,29 +100,6 @@ export const findOneProduct = async (req, res) => {
 };
 
 
-export const deleteProduct=async (req,res)=>{
-  try {
-    
-    const productId=req.params.id;
-  console.log("recieved id from the request ",req.params.id);
-  const productToDelete=await electronicsProduct.findByIdAndDelete(productId);
-  if(!productToDelete)
-  {
-    res.status(404).json({"message":"product not found"});
-
-  }
-
-  console.log("message product deleted successfully !");
-  res.status(200).json(productToDelete)
-  
-  } catch (error) {
-    
-    console.log("there is error in the deleteProduct method check it out");
-    res.status(500).json({"message":error.message});
-  }
-
-}
-
 export const filterProducts = async (req, res) => {
   try {
     const { name, price, model, category, recommendationStatus } = req.body;
@@ -188,43 +165,65 @@ export const getFeedPageProducts = async () => {
 
 
 
-export const postProduct = async (req, res) => {
-    try {
-      const {
-        name,
-        model,
-        price,
-        category,
-        spec,
-        productDate,
-        salerId,
-      } = req.body;
+// export const addProduct = async (req, res) => {
+//     try {
+//       const {
+//         name,
+//         model,
+//         price,
+//         category,
+//         spec,
+//         productDate,
+//       } = req.body;
   
-      // Validate the spec field
-      if (spec && typeof spec !== 'object') {
-        return res.status(400).json({ message: "Invalid spec field format. It must be an object with string values." });
-      }
+//       // Validate the spec field
+//       if (spec && typeof spec !== 'object') {
+//         return res.status(400).json({ message: "Invalid spec field format. It must be an object with string values." });
+//       }
   
-      // Create a new product instance
-      const newProduct = new electronicsProduct({
-        name,
-        model,
-        price,
-        category,
-        spec, // Ensure spec follows Map format
-        productDate,
-        salerId,
-      });
+//       // Create a new product instance
+//       const newProduct = new electronicsProduct({
+//         name,
+//         model,
+//         price,
+//         category,
+//         spec, // Ensure spec follows Map format
+//         productDate,
+//         salerId,
+//       });
   
-      // Save to the database
-      await newProduct.save();
-      res.status(201).json({ message: "Product saved successfully", data: newProduct });
-    } catch (error) {
-      console.error("Error in putProduct method:", error.message);
-      res.status(500).json({ message: "Server error", error: error.message });
-    }
-  };
+//       // Save to the database
+//       await newProduct.save();
+//       res.status(201).json({ message: "Product saved successfully", data: newProduct });
+//     } catch (error) {
+//       console.error("Error in putProduct method:", error.message);
+//       res.status(500).json({ message: "Server error", error: error.message });
+//     }
+//   };
   
+export const deleteProduct=async (req,res)=>{
+  try {
+    
+    const productId=req.params.id;
+  console.log("recieved id from the request ",req.params.id);
+  const productToDelete=await electronicsProduct.findByIdAndDelete(productId);
+  if(!productToDelete)
+  {
+    res.status(404).json({"message":"product not found"});
+
+  }
+
+  console.log("message product deleted successfully !");
+  res.status(200).json(productToDelete)
+  
+  } catch (error) {
+    
+    console.log("there is error in the deleteProduct method check it out");
+    res.status(500).json({"message":error.message});
+  }
+
+}
+
 
  const updateProductView = async (req, res) => {
     const { productId } = req.params; // Extract productId from request parameters

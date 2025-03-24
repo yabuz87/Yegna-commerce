@@ -46,6 +46,7 @@ const SalerSchema = new mongoose.Schema({
         enum: ['active', 'inactive'],
         default: 'active',
     },
+   
 }, { timestamps: true });
 
 export default mongoose.model('Saler', SalerSchema);

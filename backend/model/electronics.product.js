@@ -21,7 +21,7 @@ const ElectronicsProductSchema = new mongoose.Schema({
         users: [
             {
                 userId: { type: mongoose.Schema.Types.ObjectId, ref: "Buyer",unique:true},
-                timestamp: { type: Date, default: Date.now }, // Tracks when the user liked
+                timestamps: { type: Date, default: Date.now }, // Tracks when the user liked
             },
         ],
         count: { type: Number, default: 0 }, // Denormalized count of likes
@@ -33,10 +33,15 @@ const ElectronicsProductSchema = new mongoose.Schema({
             timestamp: { type: Date, default: Date.now }, // When the comment was posted
         },
     ],
-    salerId: { type: mongoose.Schema.Types.ObjectId, ref: "Saler" },
+    salerId: { type: mongoose.Schema.Types.ObjectId, ref: "Saler",unique:false},
     recommendationStatus: {
         type: Number,
         enum: [0, 1, 2], // 0: Not Recommended, 1: Recommended, 2: Highly Recommended
+    },
+    placment:{
+        type: String,
+        enum: ["sold","not sold", "on process"],
+        default:"not sold",
     },
     interactionCounts: { // Quick access for totals
         likes: { type: Number, default: 0 },
