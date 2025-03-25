@@ -13,7 +13,7 @@ export const signup=async(req,res)=>{
     const isPhoneNumberthere=await Buyer.findOne({phone});
     if(user)
     {
-        res.status(404).json({"message":"user has already registered"});
+        res.status(409).json({"message":"user has already registered"});
     }
     if(isPhoneNumberthere)
     {
@@ -124,6 +124,50 @@ export const getProducts=async(req,res)=>
     }
 
 };
+export const getOneProduct = async (req, res) => {
+    try {
+        const productId = req.params.id; // Get the product ID from the route parameter
+        const userId = req.user._id; // Get the authenticated user's ID
+
+        // Find the product by its ID
+        const product = await electronicsProduct.findById(productId);
+        if (!product) {
+            return res.status(404).json({ message: "There is no product with this ID" });
+        }
+
+        // Initialize `views` if undefined
+        if (!product.views) {
+            product.views = { users: [], count: 0 }; // Initialize views with users array and count
+        }
+
+        // Ensure `views.users` is properly initialized
+        if (!Array.isArray(product.views.users)) {
+            product.views.users = [];
+        }
+
+        // Check if the user has already viewed the product
+        const isAlreadySeen = product.views.users.some(
+            (view) => view.userId?.toString() === userId.toString()
+        );
+
+        if (!isAlreadySeen) {
+             // Add the user's view
+        product.views.users.push({ userId, timestamp: Date.now() }); // Store userId and timestamp of the view
+        product.views.count++; // Increment the view count
+
+        // Save the updated product
+        await product.save();
+
+        console.log("View updated successfully");
+        }
+
+       
+        res.status(200).json(product);
+    } catch (error) {
+        console.error("Error in the getOneProduct method:", error.message);
+        res.status(500).json({ message: "An error occurred while fetching the product", error: error.message });
+    }
+};
 export const rateProduct=async(req,res)=>
 {
     productId=req.params.id;
@@ -171,49 +215,76 @@ export const likeProduct = async (req, res) => {
         res.status(500).json({ message: "An error occurred while liking the product", error: error.message });
     }
 };
-export const commentProduct=async(req,res)=>
-{
-        const productId = req.params.id; 
-        const userId = req.user._id;
-        const {text}=req.body;
-        const product=await electronicsProduct.findById(productId);
+export const commentProduct = async (req, res) => {
+    try {
+        const productId = req.params.id; // Extract product ID from the request
+        const userId = req.user._id; // Extract user ID from the authenticated request
+        const { text } = req.body; // Extract the comment text from the request body
 
-        if (!product.comments) {
-            product.comments= { users: [], count: 0 }; // Initialize likes property if undefined
-        }
-        if (!product.comments.users.includes(userId)) {
-            product.comments.users.push(userId); // Add user ID to likes
-            product.comments.timestamps.push(Date.now) 
-            product.comments.text.push(text);
+        // Find the product using 'findById' method
+        const product = await electronicsProduct.findById(productId);
+        if (!product) {
+            return res.status(404).json({ message: "Product not found" }); // Return if the product doesn't exist
         }
 
+        // Ensure `comments` is properly initialized as an array
+        if (!Array.isArray(product.comments)) {
+            product.comments = []; // Initialize comments as an empty array
+        }
 
+        // Add a new comment object to the `comments` array
+        product.comments.push({
+            userId, // The ID of the user making the comment
+            text, // The content of the comment
+            timestamps: Date.now() // Automatically record the timestamp
+        });
+
+        // Save the updated product with the new comment
+        await product.save();
+
+        res.status(200).json({ message: "Comment added successfully" });
+    } catch (error) {
+        console.error("Error in the commentProduct method:", error.message);
+        res.status(500).json({ message: "An error occurred while adding the comment", error: error.message });
+    }
 };
+export const updateView=async(req,res)=>{
+
+}
 export const addFavourite = async (req, res) => {
     try {
-        const productId = req.params.id; 
-        const userId = req.user._id;
+        const productId = req.params.id; // Extract product ID from the request
+        const userId = req.user._id; // Extract user ID from the authenticated request
+
+        // Find the product using 'findById' method
         const product = await electronicsProduct.findById(productId);
-        const user=await Buyer.findById(userId);
-        if(!user)
-        {
-            res.status(403).json({"message":"there is no user in this id"});
+        if (!product) {
+            return res.status(404).json({ message: "There is no product like this" });
         }
 
-        if (!product) { 
-            return res.status(404).json({ message: "There is no product like this" }); // Return if product not found
+        // Find the user in the database
+        const user = await Buyer.findById(userId);
+        if (!user) {
+            return res.status(404).json({ message: "No user found with this ID" });
         }
 
-        const productAlreadyIn = user.favourites.productId.some(
-            (favourites) => favourites.productId?.toString() === productId.toString()
-        );
+        // Initialize favourites if not defined in the user's schema
+        if (!user.favourites.productId) {
+            user.favourites.productId = []; // Ensure productId is an array
+        }
+
+        // Check if the product is already in the user's favourites
+        const productAlreadyIn = user.favourites.productId.includes(productId.toString());
 
         if (productAlreadyIn) {
-            return res.status(403).json({ message: "Product is already in favourites" }); // Forbidden for duplicate additions
+            return res.status(403).json({ message: "Product is already in favourites" });
         }
 
-        product.favourites.push({ productId, timestamp: Date.now() });
+        // Add the product to the user's favourites
+        user.favourites.productId.push(productId); // Add the product ID to the array
+        user.favourites.count++; // Increment the count
 
+        // Save the updated user
         await user.save();
 
         res.status(200).json({ message: "Product has been added to favourites" });

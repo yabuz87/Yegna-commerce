@@ -8,15 +8,14 @@ const ElectronicsProductSchema = new mongoose.Schema({
     spec: { type: Map, of: mongoose.Schema.Types.Mixed }, // Flexible specs
     productDate: { type: Date, default: Date.now },
     views: {
-        count: { type: Number, default: 0 }, // Tracks the total number of views
-        users: [
-            {
-                type: mongoose.Schema.Types.ObjectId,
-                ref: "Buyer", // Reference to the Buyer collection
-                unique:true
-            },
-        ],
-    },
+    users: [
+        {
+            userId: { type: mongoose.Schema.Types.ObjectId, ref: "Buyer" },
+            timestamp: { type: Date, default: Date.now },
+        },
+    ],
+    count: { type: Number, default: 0 },
+},
     likes: {
         users: [
             {
@@ -30,7 +29,7 @@ const ElectronicsProductSchema = new mongoose.Schema({
         {
             userId: { type: mongoose.Schema.Types.ObjectId, ref: "Buyer" },
             text: { type: String, required: true }, // Content of the comment
-            timestamp: { type: Date, default: Date.now }, // When the comment was posted
+            timestamps: { type: Date, default: Date.now }, // When the comment was posted
         },
     ],
     salerId: { type: mongoose.Schema.Types.ObjectId, ref: "Saler",unique:false},
