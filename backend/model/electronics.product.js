@@ -47,6 +47,9 @@ const ElectronicsProductSchema = new mongoose.Schema({
         views: { type: Number, default: 0 },
         comments: { type: Number, default: 0 },
     },
+    image:{
+        photo:[]
+    }
 }, { timestamps: true });
 
 export default mongoose.model("ElecrtonicsProduct",ElectronicsProductSchema);

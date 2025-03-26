@@ -1,5 +1,7 @@
 import bcrypt from "bcrypt";
 import { generateToken } from "../lib/util.js";
+import path from "path";
+import fsPromises from "fs.promises()"
 import electronicsProduct from "../model/electronics.product.js";
 import Saler from "../model/saler.user.js";
 
@@ -185,7 +187,7 @@ export const editProduct = async (req, res) => {
      const userId=req.user._id;
       const productId = req.params.id; // Extract product ID from the request
       const updates = req.body; // Get updates from the request body
-  
+      if(updates.iamge)
       const product = await electronicsProduct.findById(productId); // Find the product by ID
   
       if (!product) {
