@@ -1,7 +1,6 @@
 import bcrypt from "bcrypt";
 import { generateToken } from "../lib/util.js";
 import path from "path";
-import fsPromises from "fs.promises()"
 import electronicsProduct from "../model/electronics.product.js";
 import Saler from "../model/saler.user.js";
 
@@ -135,23 +134,23 @@ export const addProduct = async (req, res) => {
         productDate,
       } = req.body;
   
-      // Validate the spec field
+     
       if (spec && typeof spec !== 'object') {
         return res.status(400).json({ message: "Invalid spec field format. It must be an object with string values." });
       }
   
-      // Create a new product instance
+     
       const newProduct = new electronicsProduct({
         name,
         model,
         price,
         category,
-        spec, // Ensure spec follows Map format
+        spec, 
         productDate,
         salerId:userId,
       });
   
-      // Save to the database
+    
       await newProduct.save();
       res.status(201).json({ message: "Product saved successfully", data: newProduct });
     } catch (error) {
@@ -185,10 +184,10 @@ export const editProduct = async (req, res) => {
     try {
     
      const userId=req.user._id;
-      const productId = req.params.id; // Extract product ID from the request
-      const updates = req.body; // Get updates from the request body
+      const productId = req.params.id; 
+      const updates = req.body;
       if(updates.iamge)
-      const product = await electronicsProduct.findById(productId); // Find the product by ID
+      {const product = await electronicsProduct.findById(productId);
   
       if (!product) {
         return res.status(404).json({ message: "Product not found" });
@@ -202,7 +201,7 @@ export const editProduct = async (req, res) => {
         
       }
   
-      // Update the product with the new attributes
+     
       Object.keys(updates).forEach((key) => {
         product[key] = updates[key];
       });
@@ -210,10 +209,11 @@ export const editProduct = async (req, res) => {
       await product.save();
   
       res.status(200).json({ message: "Product updated successfully", product });
-    } catch (error) {
-      res.status(500).json({ message: "An error occurred", error: error.message });
-    }
-  };
+    } 
+  }catch (error) {
+    res.status(500).json({ message: "An error occurred", error: error.message });
+  }
+}
 
 export const oneProduct=async(req,res)=>
 {
